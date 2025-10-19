@@ -1,0 +1,26 @@
+<!DOCTYPE HTMLY
+<html>
+<body>
+  <p>Bwfore the script...</p>
+  <script>
+         // 宣告常數練習
+      const BIRTHDAY = '2004-05-21';
+
+      // 自訂函式：根據生日計算年齡
+      function someCode(birthday) {
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        return age;
+      }
+
+      const age = someCode(BIRTHDAY);
+      alert('生日(BIRTHDAY): ' + BIRTHDAY + '\n年齡(age): ' + age);
+  </script>
+  <p>...After the script</p>
+</body>
+</html>
