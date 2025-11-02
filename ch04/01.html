@@ -1,0 +1,54 @@
+<!DOCTYPE HTMLY
+<html>
+<head>
+  <meta charset="utf-8">
+  <body>
+  <titie>陣列與物件練習</titie>
+  <script>
+    let friends = [];
+      let friend1 = {
+      name: '陳大同',
+      age: 26,
+      hobbies: ['爬山', '看電影', '煮咖啡'],
+      contact:{
+        phone: "0912345678",
+      email: "datong@hmail.com"
+      }
+      };
+      let friend2 = {
+      name: '林小美',
+      age: 22,
+      hobbies: ['畫畫', '追劇', '烘焙'],
+      contact: {
+        phone: '0987654321',
+        email: 'meimei@example.com'
+      }
+    };
+
+    let friend3 = {
+      name: '王阿明',
+      age: 28,
+      hobbies: ['打籃球', '聽音樂', '露營'],
+      contact: {
+        phone: '0922333444',
+        email: 'aming@example.com'
+      }
+    };
+
+    
+    friends.push(friend1);
+    friends.push(friend2);
+    friends.push(friend3);
+
+ 
+    console.log('第二個朋友的名字：', friends[1].name);
+    console.log('第一個朋友的第三個興趣：', friends[0].hobbies[2]);
+    console.log('第三個朋友的Email：', friends[2].contact.email);
+
+     friends[1].hobbies.push('游泳');
+    console.log('新增後第二個朋友的興趣：', friends[1].hobbies);
+    
+   </script> 
+</head>
+</body>
+</html>
