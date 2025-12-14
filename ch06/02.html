@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>Fetch POST </title>
+</head>
+<body>
+
+  <h3>Fetch POST – httpcan.org</h3>
+
+  <button onclick="sendPost()">送出 POST</button>
+
+  <pre id="result">尚未送出請求</pre>
+
+  <script>
+    function sendPost() {
+      fetch("https://httpcan.org/post", {
+        method: "POST", // 設定為 POST 請求
+        headers: {
+          "Content-Type": "application/json" // 設定傳送 JSON 格式資料
+        },
+        body: JSON.stringify({ name: "s10814014", age: 22 }) // 傳送的資料
+      })
+      .then(response => response.json()) // 解析回應的 JSON
+      .then(data => {
+        document.getElementById("result").textContent =
+          JSON.stringify(data, null, 2); // 顯示回應資料
+      });
+    }
+  </script>
+
+</body>
+</html>
