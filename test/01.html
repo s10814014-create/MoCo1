@@ -11,6 +11,7 @@
       text-decoration: underline; 
       margin: 5px 0;
     }
+    input { padding: 5px; width: 200px; }
   </style>
 </head>
 <body>
@@ -24,7 +25,15 @@
   <h3>附近推薦</h3>
   <ul id="places">請先取得位置...</ul>
 
+  <!-- 使用者輸入欄位 -->
+  <h3>自訂搜尋</h3>
+  <input type="text" id="userInput" placeholder="輸入你想找的地點">
+  <button onclick="searchUserPlace()">搜尋</button>
+
   <script>
+    let userLat = null;
+    let userLon = null;
+
     function getLocation() {
       if (!navigator.geolocation) {
         alert("裝置不支援地理位置");
@@ -33,29 +42,25 @@
 
       navigator.geolocation.getCurrentPosition(
         function(position) {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
+          userLat = position.coords.latitude;
+          userLon = position.coords.longitude;
 
-          // 顯示經緯度
           document.getElementById("location").textContent =
-            `緯度: ${lat}, 經度: ${lon}`;
+            `緯度: ${userLat}, 經度: ${userLon}`;
 
           // 模擬附近地點
           const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
 
           const ul = document.getElementById("places");
-          ul.innerHTML = ""; // 先清空列表
+          ul.innerHTML = ""; // 清空列表
 
           places.forEach(function(place) {
             const li = document.createElement("li");
             li.textContent = place;
-
-            // 點擊 li 時打開 Google 地圖搜尋
             li.onclick = function() {
-              const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${lat},${lon},15z`;
-              window.open(url, "_blank"); // 新分頁開啟
+              const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
+              window.open(url, "_blank");
             };
-
             ul.appendChild(li);
           });
         },
@@ -63,6 +68,21 @@
           alert("無法取得位置: " + error.message);
         }
       );
+    }
+
+    // 使用者自訂搜尋
+    function searchUserPlace() {
+      const place = document.getElementById("userInput").value.trim();
+      if (!place) {
+        alert("請輸入要搜尋的地點");
+        return;
+      }
+      if (userLat === null || userLon === null) {
+        alert("請先取得位置");
+        return;
+      }
+      const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
+      window.open(url, "_blank");
     }
   </script>
 </body>
