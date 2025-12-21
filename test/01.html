@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>附近好吃好玩</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    button { padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+  <h2>附近好吃好玩</h2>
+  <button onclick="getLocation()">取得我的位置</button>
+
+  <h3>我的位置</h3>
+  <p id="location">尚未取得資料...</p>
+
+  <h3>附近推薦</h3>
+  <ul id="places">
+    請先取得位置...
+  </ul>
+
+  <script>
+    function getLocation() {
+      if (!navigator.geolocation) {
+        alert("裝置不支援地理位置");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          // 取得經緯度
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          // 顯示位置
+          document.getElementById("location").textContent =
+            `緯度: ${lat}, 經度: ${lon}`;
+
+          // 顯示附近好吃好玩（模擬）
+          const places = ["小籠包店", "咖啡廳", "公園", "電影城"];
+          const ul = document.getElementById("places");
+          ul.innerHTML = ""; // 清空
+          places.forEach(p => {
+            const li = document.createElement("li");
+            li.textContent = p;
+            ul.appendChild(li);
+          });
+        },
+        function(error) {
+          alert("無法取得位置: " + error.message);
+        }
+      );
+    }
+  </script>
+</body>
+</html>
