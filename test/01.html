@@ -5,7 +5,12 @@
   <style>
     body { font-family: Arial; padding: 20px; }
     button { padding: 10px; margin: 10px 0; }
-    ul li { cursor: pointer; color: blue; text-decoration: underline; }
+    ul li { 
+      cursor: pointer; 
+      color: blue; 
+      text-decoration: underline; 
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
@@ -31,23 +36,26 @@
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
 
+          // 顯示經緯度
           document.getElementById("location").textContent =
             `緯度: ${lat}, 經度: ${lon}`;
 
-          // 這裡放附近常見餐廳或景點名稱
-          const places = ["麥當勞", "星巴克", "全聯", "動物園", "購物中心"];
+          // 模擬附近地點
+          const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
 
           const ul = document.getElementById("places");
-          ul.innerHTML = "";
+          ul.innerHTML = ""; // 先清空列表
 
-          places.forEach(place => {
+          places.forEach(function(place) {
             const li = document.createElement("li");
             li.textContent = place;
-            // 點擊就跳到 Google 地圖搜尋
+
+            // 點擊 li 時打開 Google 地圖搜尋
             li.onclick = function() {
-              const url = `https://www.google.com/maps/search/${place}/@${lat},${lon},15z`;
+              const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${lat},${lon},15z`;
               window.open(url, "_blank"); // 新分頁開啟
             };
+
             ul.appendChild(li);
           });
         },
