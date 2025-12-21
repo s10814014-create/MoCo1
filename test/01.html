@@ -1,18 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>附近好吃好玩</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    button { padding: 10px; margin: 10px 0; }
-    ul li { 
-      cursor: pointer; 
-      color: blue; 
-      text-decoration: underline; 
-      margin: 5px 0;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f8ff;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
     }
-    input { padding: 5px; width: 200px; }
-    .result { font-weight: bold; margin-top: 10px; }
+    h2 {
+      font-size: 2em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    h3 {
+      font-size: 1.5em;
+      color: #4CAF50;
+      margin-bottom: 15px;
+    }
+    p, li {
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      font-size: 1em;
+      padding: 12px 25px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    input {
+      padding: 10px;
+      width: 70%;
+      margin-bottom: 20px;
+      font-size: 1.1em;
+      border: 2px solid #4CAF50;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      border-color: #388E3C;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    ul li {
+      cursor: pointer;
+      color: #4CAF50;
+      text-decoration: underline;
+      margin: 10px 0;
+      font-size: 1.2em;
+    }
+    ul li:hover {
+      color: #388E3C;
+    }
+    .result {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #FF9800;
+    }
+    .jiao-result {
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: #FF5722;
+    }
+    .location {
+      font-size: 1.1em;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .jiao-images {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .jiao-images img {
+      width: 60px;
+      margin: 10px;
+    }
   </style>
 </head>
 <body>
@@ -21,13 +102,15 @@
 
   <!-- 位置 -->
   <button onclick="getLocation()">取得我的位置</button>
-  <h3>我的位置</h3>
-  <p id="location">尚未取得資料...</p>
+  <p id="location" class="location">尚未取得資料...</p>
 
   <!-- 擲筊 -->
   <h3>擲筊判斷今天適不適合出門</h3>
   <button onclick="throwJiao()">擲筊</button>
-  <p id="jiaoResult" class="result">尚未擲筊</p>
+  <p id="jiaoResult" class="jiao-result">尚未擲筊</p>
+
+  <!-- 顯示茭圖案 -->
+  <div id="jiaoImages" class="jiao-images"></div>
 
   <!-- 附近推薦 -->
   <h3>附近推薦</h3>
@@ -104,15 +187,32 @@
       const jiao2 = Math.floor(Math.random() * 2);
 
       let text = "";
+      const jiaoImages = document.getElementById("jiaoImages");
+      jiaoImages.innerHTML = ""; // 清空圖片
 
       if (jiao1 !== jiao2) {
         text = "聖筊：今天非常適合出門！";
+        // 顯示正反圖
+        jiaoImages.innerHTML = `
+          <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
+          <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
+        `;
         canGoOut = true;
       } else if (jiao1 === 0 && jiao2 === 0) {
         text = "笑筊：今天普通，外出請自行斟酌。";
+        // 顯示反反圖
+        jiaoImages.innerHTML = `
+          <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
+          <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
+        `;
         canGoOut = true;
       } else {
         text = "陰筊：今天不太適合出門，建議在家休息。";
+        // 顯示正正圖
+        jiaoImages.innerHTML = `
+          <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
+          <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
+        `;
         canGoOut = false;
       }
 
