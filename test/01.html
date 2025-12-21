@@ -5,6 +5,7 @@
   <style>
     body { font-family: Arial; padding: 20px; }
     button { padding: 10px; margin: 10px 0; }
+    ul li { cursor: pointer; color: blue; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -16,9 +17,7 @@
   <p id="location">尚未取得資料...</p>
 
   <h3>附近推薦</h3>
-  <ul id="places">
-    請先取得位置...
-  </ul>
+  <ul id="places">請先取得位置...</ul>
 
   <script>
     function getLocation() {
@@ -29,21 +28,26 @@
 
       navigator.geolocation.getCurrentPosition(
         function(position) {
-          // 取得經緯度
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
 
-          // 顯示位置
           document.getElementById("location").textContent =
             `緯度: ${lat}, 經度: ${lon}`;
 
-          // 顯示附近好吃好玩（模擬）
-          const places = ["小籠包店", "咖啡廳", "公園", "電影城"];
+          // 這裡放附近常見餐廳或景點名稱
+          const places = ["麥當勞", "星巴克", "全聯", "動物園", "購物中心"];
+
           const ul = document.getElementById("places");
-          ul.innerHTML = ""; // 清空
-          places.forEach(p => {
+          ul.innerHTML = "";
+
+          places.forEach(place => {
             const li = document.createElement("li");
-            li.textContent = p;
+            li.textContent = place;
+            // 點擊就跳到 Google 地圖搜尋
+            li.onclick = function() {
+              const url = `https://www.google.com/maps/search/${place}/@${lat},${lon},15z`;
+              window.open(url, "_blank"); // 新分頁開啟
+            };
             ul.appendChild(li);
           });
         },
