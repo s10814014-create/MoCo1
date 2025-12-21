@@ -12,20 +12,28 @@
       margin: 5px 0;
     }
     input { padding: 5px; width: 200px; }
+    .result { font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
 
   <h2>附近好吃好玩</h2>
-  <button onclick="getLocation()">取得我的位置</button>
 
+  <!-- 位置 -->
+  <button onclick="getLocation()">取得我的位置</button>
   <h3>我的位置</h3>
   <p id="location">尚未取得資料...</p>
 
+  <!-- 擲筊 -->
+  <h3>擲筊判斷今天適不適合出門</h3>
+  <button onclick="throwJiao()">擲筊</button>
+  <p id="jiaoResult" class="result">尚未擲筊</p>
+
+  <!-- 附近推薦 -->
   <h3>附近推薦</h3>
   <ul id="places">請先取得位置...</ul>
 
-  <!-- 使用者輸入欄位 -->
+  <!-- 自訂搜尋 -->
   <h3>自訂搜尋</h3>
   <input type="text" id="userInput" placeholder="輸入你想找的地點">
   <button onclick="searchUserPlace()">搜尋</button>
@@ -33,7 +41,9 @@
   <script>
     let userLat = null;
     let userLon = null;
+    let canGoOut = true; // 擲筊結果
 
+    // 取得位置
     function getLocation() {
       if (!navigator.geolocation) {
         alert("裝置不支援地理位置");
@@ -48,21 +58,7 @@
           document.getElementById("location").textContent =
             `緯度: ${userLat}, 經度: ${userLon}`;
 
-          // 模擬附近地點
-          const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
-
-          const ul = document.getElementById("places");
-          ul.innerHTML = ""; // 清空列表
-
-          places.forEach(function(place) {
-            const li = document.createElement("li");
-            li.textContent = place;
-            li.onclick = function() {
-              const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
-              window.open(url, "_blank");
-            };
-            ul.appendChild(li);
-          });
+          showPlaces();
         },
         function(error) {
           alert("無法取得位置: " + error.message);
@@ -70,20 +66,59 @@
       );
     }
 
-    // 使用者自訂搜尋
+    // 顯示附近地點
+    function showPlaces() {
+      const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
+      const ul = document.getElementById("places");
+      ul.innerHTML = "";
+
+      places.forEach(function(place) {
+        const li = document.createElement("li");
+        li.textContent = place;
+        li.onclick = function() {
+          const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
+          window.open(url, "_blank");
+        };
+        ul.appendChild(li);
+      });
+    }
+
+    // 自訂搜尋
     function searchUserPlace() {
       const place = document.getElementById("userInput").value.trim();
       if (!place) {
         alert("請輸入要搜尋的地點");
         return;
       }
-      if (userLat === null || userLon === null) {
+      if (userLat === null) {
         alert("請先取得位置");
         return;
       }
       const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
       window.open(url, "_blank");
     }
+
+    // 擲筊判斷
+    function throwJiao() {
+      const jiao1 = Math.floor(Math.random() * 2); // 0 or 1
+      const jiao2 = Math.floor(Math.random() * 2);
+
+      let text = "";
+
+      if (jiao1 !== jiao2) {
+        text = "聖筊：今天非常適合出門！";
+        canGoOut = true;
+      } else if (jiao1 === 0 && jiao2 === 0) {
+        text = "笑筊：今天普通，外出請自行斟酌。";
+        canGoOut = true;
+      } else {
+        text = "陰筊：今天不太適合出門，建議在家休息。";
+        canGoOut = false;
+      }
+
+      document.getElementById("jiaoResult").textContent = text;
+    }
   </script>
+
 </body>
 </html>
