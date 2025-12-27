@@ -126,61 +126,6 @@ let userLat = null;
 let userLon = null;
 let canGoOut = true; // 擲筊結果
 
-// 取得位置
-function getLocation() {
-    if (!navigator.geolocation) {
-        alert("裝置不支援地理位置");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            userLat = position.coords.latitude;
-            userLon = position.coords.longitude;
-
-            document.getElementById("location").textContent =
-            `緯度: ${userLat}, 經度: ${userLon}`;
-
-            showPlaces();
-        },
-        function(error) {
-            alert("無法取得位置: " + error.message);
-        }
-    );
-}
-
-// 顯示附近地點
-function showPlaces() {
-    const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
-    const ul = document.getElementById("places");
-    ul.innerHTML = "";
-
-    places.forEach(function(place) {
-        const li = document.createElement("li");
-        li.textContent = place;
-        li.onclick = function() {
-            const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
-            window.open(url, "_blank");
-        };
-        ul.appendChild(li);
-    });
-}
-
-// 自訂搜尋
-function searchUserPlace() {
-    const place = document.getElementById("userInput").value.trim();
-    if (!place) {
-        alert("請輸入要搜尋的地點");
-        return;
-    }
-    if (userLat === null) {
-        alert("請先取得位置");
-        return;
-    }
-    const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
-    window.open(url, "_blank");
-}
-
 // 擲筊判斷
 function throwJiao() {
     const jiao1 = Math.floor(Math.random() * 2); // 0 or 1
@@ -192,23 +137,26 @@ function throwJiao() {
 
     if (jiao1 !== jiao2) {
         text = "聖筊：今天非常適合出門！";
-        // 顯示聖交圖片
+        // 顯示正反圖
         jiaoImages.innerHTML = `
-            <img src="images/03.jpg" alt="聖交" />
+        <img src="https://s10814014-create.github.io/MoCo1/images/03.jpg" alt="聖筊" />
+       
         `;
         canGoOut = true;
     } else if (jiao1 === 0 && jiao2 === 0) {
         text = "笑筊：今天普通，外出請自行斟酌。";
-        // 顯示笑交圖片
+        // 顯示反反圖
         jiaoImages.innerHTML = `
-            <img src="images/02.jpg" alt="笑交" />
+        <img src="https://s10814014-create.github.io/MoCo1/images/02.jpg" alt="笑筊" />
+    
         `;
         canGoOut = true;
     } else {
         text = "陰筊：今天不太適合出門，建議在家休息。";
-        // 顯示陰交圖片
+        // 顯示正正圖
         jiaoImages.innerHTML = `
-            <img src="images/01.jpg" alt="陰交" />
+        <img src="https://s10814014-create.github.io/MoCo1/images/01.jpg" alt="陰筊" />
+    
         `;
         canGoOut = false;
     }
