@@ -150,19 +150,29 @@
 
   /* =====================
      農民曆 API
-     使用公開萬年曆資料
+     使用香港天文台公開API
   ===================== */
   function loadAlmanac() {
-    fetch("https://api.timelessq.com/time")
+    // 取得今天的日期
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // 月份要加 1
+    const day = today.getDate();
+
+    const url = `https://data.weather.gov.hk/weatherAPI/opendata/lunardate.php?date=${year}-${month}-${day}&lang=tc`;
+
+    fetch(url)
       .then(res => res.json())
       .then(data => {
-        const lunar = data.lunar?.date || "未知";
-        const yi = data.almanac?.yi || [];
-        const ji = data.almanac?.ji || [];
+        const lunar = data.LunarDate; // 農曆日期
+        const yi = data.Yi;           // 宜
+        const ji = data.Ji;           // 忌
 
+        // 顯示農曆日期
         document.getElementById("almanacText").textContent =
           `農曆：${lunar}\n宜：${yi.join("、")}\n忌：${ji.join("、")}`;
 
+        // 顯示是否適合出門
         document.getElementById("almanacSuggest").textContent =
           checkGoOut(yi, ji);
       })
