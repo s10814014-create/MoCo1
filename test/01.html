@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f7fa;
+      background-color: #f0f8ff;
       color: #333;
       margin: 0;
       padding: 20px;
@@ -16,82 +16,63 @@
     }
 
     h2 {
-      font-size: 2.5em;
+      font-size: 2em;
       margin-bottom: 20px;
-      color: #4CAF50;
     }
 
     h3 {
-      font-size: 1.8em;
+      color: #4CAF50;
       margin-top: 30px;
-      color: #388E3C;
     }
 
-    p, li {
+    p {
       font-size: 1.2em;
-      line-height: 1.6;
-      margin-bottom: 15px;
     }
 
     button {
       background-color: #4CAF50;
       color: white;
       font-size: 1em;
-      padding: 12px 25px;
-      margin: 10px 0;
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      margin: 10px;
     }
+
     button:hover {
       background-color: #45a049;
     }
 
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      color: #4CAF50;
+      cursor: pointer;
+      text-decoration: underline;
+      margin: 8px 0;
+    }
+
     input {
-      padding: 12px;
+      padding: 8px;
       width: 70%;
-      margin-bottom: 20px;
-      font-size: 1.1em;
-      border: 2px solid #4CAF50;
-      border-radius: 5px;
-      outline: none;
-      transition: border-color 0.3s;
+      font-size: 1em;
     }
 
-    input:focus {
-      border-color: #388E3C;
-    }
-
-    /* 區塊背景色搭配 */
     .box {
-      background-color: #ffffff;
+      background: #fff;
       border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
+      padding: 15px;
+      margin-top: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .location-box {
-      background-color: #ffeb3b;
-    }
-
-    .jiao-box {
-      background-color: #ff7043;
-    }
-
-    .places-box {
-      background-color: #64b5f6;
-    }
-
-    .search-box {
-      background-color: #81c784;
     }
 
     .result {
       font-weight: bold;
       color: #FF5722;
-      margin-top: 20px;
     }
 
     .jiao-images {
@@ -99,201 +80,187 @@
       justify-content: center;
       margin-top: 20px;
     }
+
     .jiao-images img {
       width: 60px;
       margin: 10px;
     }
-
   </style>
 </head>
 
 <body>
 
-<h2>附近好吃好玩</h2>
+  <h2>附近好吃好玩</h2>
 
-<!-- 位置 -->
-<div class="box location-box">
-  <h3>🔍 取得我的位置</h3>
-  <button onclick="getLocation()">取得我的位置</button>
-  <p id="location">尚未取得位置</p>
-</div>
+  <!-- 位置 -->
+  <div class="box">
+    <h3>🔍 取得我的位置</h3>
+    <button onclick="getLocation()">取得我的位置</button>
+    <p id="location">尚未取得位置</p>
+  </div>
 
-<!-- 農民曆 -->
-<div class="box">
-  <h3>📅 今日農民曆</h3>
-  <p id="almanacText">讀取中...</p>
-  <p id="almanacSuggest" class="result"></p>
-</div>
+  <!-- 農民曆 -->
+  <div class="box">
+    <h3>📅 今日農民曆</h3>
+    <p id="almanacText">讀取中...</p>
+    <p id="almanacSuggest" class="result"></p>
+  </div>
 
-<!-- 擲筊 -->
-<div class="box jiao-box">
-  <h3>📿 擲筊判斷</h3>
-  <button onclick="throwJiao()">擲筊</button>
-  <p id="jiaoResult">尚未擲筊</p>
-  <div id="jiaoImages" class="jiao-images"></div>
-</div>
+  <!-- 擲筊 -->
+  <div class="box">
+    <h3>📿 擲筊判斷</h3>
+    <button onclick="throwJiao()">擲筊</button>
+    <p id="jiaoResult">尚未擲筊</p>
+    <div id="jiaoImages" class="jiao-images"></div>
+  </div>
 
-<!-- 附近推薦 -->
-<div class="box places-box">
-  <h3>📍 附近推薦</h3>
-  <ul id="places">請先取得位置</ul>
-</div>
+  <!-- 附近推薦 -->
+  <div class="box">
+    <h3>📍 附近推薦</h3>
+    <ul id="places">請先取得位置</ul>
+  </div>
 
-<!-- 自訂搜尋 -->
-<div class="box search-box">
-  <h3>🔍 自訂搜尋</h3>
-  <input id="userInput" placeholder="輸入想找的地點">
-  <br>
-  <button onclick="searchUserPlace()">搜尋</button>
-</div>
+  <!-- 自訂搜尋 -->
+  <div class="box">
+    <h3>🔍 自訂搜尋</h3>
+    <input id="userInput" placeholder="輸入想找的地點">
+    <br>
+    <button onclick="searchUserPlace()">搜尋</button>
+  </div>
 
-<script>
-  let userLat = null;
-  let userLon = null;
-  let canGoOut = true; // 擲筊結果
+  <script>
+    let userLat = null;
+    let userLon = null;
 
-  /* =====================
-     取得位置
-  ===================== */
-  function getLocation() {
-    if (!navigator.geolocation) {
-      alert("裝置不支援定位");
-      return;
-    }
+    // 取得位置
+    function getLocation() {
+      if (!navigator.geolocation) {
+        alert("裝置不支援定位");
+        return;
+      }
 
-    navigator.geolocation.getCurrentPosition(pos => {
-      userLat = pos.coords.latitude;
-      userLon = pos.coords.longitude;
-      document.getElementById("location").textContent =
-        `緯度：${userLat.toFixed(4)}，經度：${userLon.toFixed(4)}`;
-      showPlaces();
-    });
-  }
-
-  /* =====================
-     附近地點
-  ===================== */
-  function showPlaces() {
-    const list = ["星巴克", "麥當勞", "公園", "夜市", "購物中心"];
-    const ul = document.getElementById("places");
-    ul.innerHTML = "";
-
-    list.forEach(place => {
-      const li = document.createElement("li");
-      li.textContent = place;
-      li.onclick = () => {
-        const url =
-          `https://www.google.com/maps/search/${place}/@${userLat},${userLon},15z`;
-        window.open(url, "_blank");
-      };
-      ul.appendChild(li);
-    });
-  }
-
-  function searchUserPlace() {
-    const place = document.getElementById("userInput").value.trim();
-    if (!place || userLat === null) {
-      alert("請先取得位置並輸入地點");
-      return;
-    }
-    const url =
-      `https://www.google.com/maps/search/${place}/@${userLat},${userLon},15z`;
-    window.open(url, "_blank");
-  }
-
-  /* =====================
-     擲筊
-  ===================== */
-  function throwJiao() {
-    const a = Math.floor(Math.random() * 2);
-    const b = Math.floor(Math.random() * 2);
-
-    let result = "";
-    const jiaoImages = document.getElementById("jiaoImages");
-    jiaoImages.innerHTML = ""; // 清空圖片
-
-    if (a !== b) {
-      result = "聖筊：今天非常適合出門！";
-      jiaoImages.innerHTML = `
-        <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
-        <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
-      `;
-      canGoOut = true;
-    } else if (a === 0) {
-      result = "笑筊：普通日，自行斟酌。";
-      jiaoImages.innerHTML = `
-        <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
-        <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
-      `;
-      canGoOut = true;
-    } else {
-      result = "陰筊：今天不建議出門。";
-      jiaoImages.innerHTML = `
-        <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
-        <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
-      `;
-      canGoOut = false;
-    }
-
-    document.getElementById("jiaoResult").textContent = result;
-    // 擲完後再載入農民曆
-    loadAlmanac();
-  }
-
-  /* =====================
-     農民曆 API
-     使用香港天文台公開API
-  ===================== */
-  function loadAlmanac() {
-    // 取得今天的日期
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // 月份要加 1
-    const day = today.getDate();
-
-    const url = `https://data.weather.gov.hk/weatherAPI/opendata/lunardate.php?date=${year}-${month}-${day}&lang=tc`;
-
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data); // 在這裡檢查 API 回應的結構
-
-        // 檢查資料結構，讓你了解如何處理
-        const lunar = data.LunarDate || "資料未提供";
-        const yi = data.Yi || [];
-        const ji = data.Ji || [];
-
-        // 顯示農曆日期
-        document.getElementById("almanacText").textContent =
-          `農曆：${lunar}\n宜：${yi.join("、")}\n忌：${ji.join("、")}`;
-
-        // 顯示是否適合出門
-        document.getElementById("almanacSuggest").textContent =
-          checkGoOut(yi, ji);
-      })
-      .catch(() => {
-        document.getElementById("almanacText").textContent =
-          "農民曆資料載入失敗";
-        document.getElementById("almanacSuggest").textContent =
-          "請自行判斷是否出門";
+      navigator.geolocation.getCurrentPosition(pos => {
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
+        document.getElementById("location").textContent =
+          `緯度：${userLat.toFixed(4)}，經度：${userLon.toFixed(4)}`;
+        showPlaces();
       });
-  }
+    }
 
-  function checkGoOut(yi, ji) {
-    const y = yi.includes("出行");
-    const j = ji.includes("出行");
+    // 顯示附近地點
+    function showPlaces() {
+      const list = ["星巴克", "麥當勞", "公園", "夜市", "購物中心"];
+      const ul = document.getElementById("places");
+      ul.innerHTML = "";
 
-    if (y && !j) return "✅ 今日農民曆：適合出門";
-    if (y && j) return "⚠️ 宜忌皆有出行，請斟酌";
-    if (!y && j) return "🚫 今日不建議出門";
-    return "📌 普通日，可自行決定";
-  }
+      list.forEach(place => {
+        const li = document.createElement("li");
+        li.textContent = place;
+        li.onclick = () => {
+          const url =
+            `https://www.google.com/maps/search/${place}/@${userLat},${userLon},15z`;
+          window.open(url, "_blank");
+        };
+        ul.appendChild(li);
+      });
+    }
 
-  /* =====================
-     頁面載入時執行
-  ===================== */
-  loadAlmanac();
-</script>
+    // 搜尋地點
+    function searchUserPlace() {
+      const place = document.getElementById("userInput").value.trim();
+      if (!place || userLat === null) {
+        alert("請先取得位置並輸入地點");
+        return;
+      }
+      const url =
+        `https://www.google.com/maps/search/${place}/@${userLat},${userLon},15z`;
+      window.open(url, "_blank");
+    }
+
+    // 擲筊
+    function throwJiao() {
+      const a = Math.floor(Math.random() * 2);
+      const b = Math.floor(Math.random() * 2);
+
+      let result = "";
+      const jiaoImages = document.getElementById("jiaoImages");
+      jiaoImages.innerHTML = ""; // 清空圖片
+
+      if (a !== b) {
+        result = "聖筊：今天非常適合出門！";
+        jiaoImages.innerHTML = `
+          <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
+          <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
+        `;
+      } else if (a === 0) {
+        result = "笑筊：普通日，自行斟酌。";
+        jiaoImages.innerHTML = `
+          <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
+          <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
+        `;
+      } else {
+        result = "陰筊：今天不建議出門。";
+        jiaoImages.innerHTML = `
+          <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
+          <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
+        `;
+      }
+
+      document.getElementById("jiaoResult").textContent = result;
+
+      // 擲完後載入農民曆
+      loadAlmanac();
+    }
+
+    // 農民曆 API
+    function loadAlmanac() {
+      // 取得今天的日期
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // 月份要加 1
+      const day = today.getDate();
+
+      const url = `https://data.weather.gov.hk/weatherAPI/opendata/lunardate.php?date=${year}-${month}-${day}&lang=tc`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          console.log(data); // 在這裡檢查 API 回應的結構
+
+          const lunar = data.LunarDate || "資料未提供";
+          const yi = data.Yi || [];
+          const ji = data.Ji || [];
+
+          // 顯示農曆日期
+          document.getElementById("almanacText").textContent =
+            `農曆：${lunar}\n宜：${yi.join("、")}\n忌：${ji.join("、")}`;
+
+          // 顯示是否適合出門
+          document.getElementById("almanacSuggest").textContent =
+            checkGoOut(yi, ji);
+        })
+        .catch(() => {
+          document.getElementById("almanacText").textContent =
+            "農民曆資料載入失敗";
+          document.getElementById("almanacSuggest").textContent =
+            "請自行判斷是否出門";
+        });
+    }
+
+    function checkGoOut(yi, ji) {
+      const y = yi.includes("出行");
+      const j = ji.includes("出行");
+
+      if (y && !j) return "✅ 今日農民曆：適合出門";
+      if (y && j) return "⚠️ 宜忌皆有出行，請斟酌";
+      if (!y && j) return "🚫 今日不建議出門";
+      return "📌 普通日，可自行決定";
+    }
+
+    // 頁面載入時執行
+    loadAlmanac();
+  </script>
 
 </body>
 </html>
