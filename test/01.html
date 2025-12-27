@@ -94,14 +94,6 @@ ul li:hover {
     width: 60px;
     margin: 10px;
 }
-
-/* 農民曆顯示樣式 */
-iframe {
-    width: 100%;
-    height: 400px;
-    border: none;
-    margin-top: 20px;
-}
 </style>
 </head>
 <body>
@@ -129,98 +121,10 @@ iframe {
 <input type="text" id="userInput" placeholder="輸入你想找的地點">
 <button onclick="searchUserPlace()">搜尋</button>
 
-<!-- 農民曆建議 -->
-<h3>農民曆建議</h3>
-<p id="nongliSuggestion">請擲筊或查看農民曆的建議...</p>
-
 <script>
 let userLat = null;
 let userLon = null;
 let canGoOut = true; // 擲筊結果
-let nongliSuggestion = ""; // 農民曆建議
-
-// 擲筊判斷
-function throwJiao() {
-    const jiao1 = Math.floor(Math.random() * 2); // 0 or 1
-    const jiao2 = Math.floor(Math.random() * 2);
-
-    let text = "";
-    const jiaoImages = document.getElementById("jiaoImages");
-    jiaoImages.innerHTML = ""; // 清空圖片
-
-    // 擲筊結果的判斷
-    if (jiao1 !== jiao2) {
-        text = "聖筊：今天非常適合出門！";
-        // 顯示正反圖
-        jiaoImages.innerHTML = `
-        <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
-        <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
-        `;
-        canGoOut = true;
-    } else if (jiao1 === 0 && jiao2 === 0) {
-        text = "笑筊：今天普通，外出請自行斟酌。";
-        // 顯示反反圖
-        jiaoImages.innerHTML = `
-        <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
-        <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
-        `;
-        canGoOut = true;
-    } else {
-        text = "陰筊：今天不太適合出門，建議在家休息。";
-        // 顯示正正圖
-        jiaoImages.innerHTML = `
-        <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
-        <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
-        `;
-        canGoOut = false;
-    }
-
-    document.getElementById("jiaoResult").textContent = text;
-
-    // 根據日期查詢農民曆建議
-    fetchNongliSuggestion();
-}
-
-// 從農民曆 API 獲取當天的宜忌建議
-function fetchNongliSuggestion() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // 月份從0開始
-    const date = today.getDate();
-
-    const apiUrl = `https://api.tianapi.com/nongli/index?key=YOUR_API_KEY&date=${year}-${month}-${date}`;
-
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.result) {
-                nongliSuggestion = data.result[0].nongli;
-            } else {
-                nongliSuggestion = "無法取得農民曆建議，請稍後再試。";
-            }
-        })
-        .catch(error => {
-            // 捕獲錯誤並顯示友善訊息
-            nongliSuggestion = "無法連接到農民曆 API，請稍後再試。";
-        })
-        .finally(() => {
-            // 確保無論有無錯誤都更新顯示
-            updateSuggestionBasedOnJiaoResult();
-        });
-}
-
-// 根據擲筊結果更新農民曆建議
-function updateSuggestionBasedOnJiaoResult() {
-    const jiaoResultText = document.getElementById("jiaoResult").textContent;
-
-    if (canGoOut && nongliSuggestion.includes("宜出行")) {
-        document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，且農民曆建議：今日宜出行！`;
-    } else if (!canGoOut && nongliSuggestion.includes("忌出行")) {
-        document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，且農民曆建議：今日不宜出行，建議在家休息。`;
-    } else {
-        document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，農民曆建議：${nongliSuggestion}`;
-    }
-}
 
 // 取得位置
 function getLocation() {
@@ -235,7 +139,7 @@ function getLocation() {
             userLon = position.coords.longitude;
 
             document.getElementById("location").textContent =
-                `緯度: ${userLat}, 經度: ${userLon}`;
+            `緯度: ${userLat}, 經度: ${userLon}`;
 
             showPlaces();
         },
@@ -276,8 +180,42 @@ function searchUserPlace() {
     const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
     window.open(url, "_blank");
 }
+
+// 擲筊判斷
+function throwJiao() {
+    const jiao1 = Math.floor(Math.random() * 2); // 0 or 1
+    const jiao2 = Math.floor(Math.random() * 2);
+
+    let text = "";
+    const jiaoImages = document.getElementById("jiaoImages");
+    jiaoImages.innerHTML = ""; // 清空圖片
+
+    if (jiao1 !== jiao2) {
+        text = "聖筊：今天非常適合出門！";
+        // 顯示聖交圖片
+        jiaoImages.innerHTML = `
+            <img src="images/03.jpg" alt="聖交" />
+        `;
+        canGoOut = true;
+    } else if (jiao1 === 0 && jiao2 === 0) {
+        text = "笑筊：今天普通，外出請自行斟酌。";
+        // 顯示笑交圖片
+        jiaoImages.innerHTML = `
+            <img src="images/02.jpg" alt="笑交" />
+        `;
+        canGoOut = true;
+    } else {
+        text = "陰筊：今天不太適合出門，建議在家休息。";
+        // 顯示陰交圖片
+        jiaoImages.innerHTML = `
+            <img src="images/01.jpg" alt="陰交" />
+        `;
+        canGoOut = false;
+    }
+
+    document.getElementById("jiaoResult").textContent = text;
+}
 </script>
 
 </body>
 </html>
-
