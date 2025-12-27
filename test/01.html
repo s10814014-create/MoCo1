@@ -150,6 +150,7 @@
 <script>
   let userLat = null;
   let userLon = null;
+  let canGoOut = true; // 擲筊結果
 
   /* =====================
      取得位置
@@ -217,21 +218,26 @@
         <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
         <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
       `;
+      canGoOut = true;
     } else if (a === 0) {
       result = "笑筊：普通日，自行斟酌。";
       jiaoImages.innerHTML = `
         <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
         <img src="https://via.placeholder.com/60x60.png?text=反" alt="反面" />
       `;
+      canGoOut = true;
     } else {
       result = "陰筊：今天不建議出門。";
       jiaoImages.innerHTML = `
         <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
         <img src="https://via.placeholder.com/60x60.png?text=正" alt="正面" />
       `;
+      canGoOut = false;
     }
 
     document.getElementById("jiaoResult").textContent = result;
+    // 擲完後再載入農民曆
+    loadAlmanac();
   }
 
   /* =====================
