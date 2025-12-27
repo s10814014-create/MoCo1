@@ -138,12 +138,6 @@ let userLat = null;
 let userLon = null;
 let canGoOut = true; // 擲筊結果
 
-// 假設的農民曆 API 資料（此處僅為範例，實際使用時需改為真實 API）
-const nongliData = {
-    "date": "2025-12-27",
-    "suggestion": "今天宜出行，適合外出遊玩。"
-};
-
 // 取得位置
 function getLocation() {
     if (!navigator.geolocation) {
@@ -236,14 +230,32 @@ function throwJiao() {
 
     document.getElementById("jiaoResult").textContent = text;
 
-    // 顯示農民曆建議
-    updateNongliSuggestion();
+    // 根據日期查詢農民曆建議
+    fetchNongliSuggestion();
 }
 
-// 更新農民曆建議
-function updateNongliSuggestion() {
-    let suggestionText = "今日農民曆建議: " + nongliData.suggestion;
-    document.getElementById("nongliSuggestion").textContent = suggestionText;
+// 從農民曆 API 獲取當天的宜忌建議
+function fetchNongliSuggestion() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // 月份從0開始
+    const date = today.getDate();
+
+    const apiUrl = `https://api.tianapi.com/nongli/index?key=YOUR_API_KEY&date=${year}-${month}-${date}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.result) {
+                const suggestion = data.result[0].nongli;
+                document.getElementById("nongliSuggestion").textContent = `今天的農民曆建議: ${suggestion}`;
+            } else {
+                document.getElementById("nongliSuggestion").textContent = "無法取得農民曆建議，請稍後再試。";
+            }
+        })
+        .catch(error => {
+            document.getElementById("nongliSuggestion").textContent = "無法連接到農民曆 API，請檢查網路。";
+        });
 }
 </script>
 
