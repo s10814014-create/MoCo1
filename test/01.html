@@ -137,6 +137,7 @@ iframe {
 let userLat = null;
 let userLon = null;
 let canGoOut = true; // 擲筊結果
+let nongliSuggestion = ""; // 農民曆建議
 
 // 取得位置
 function getLocation() {
@@ -202,6 +203,7 @@ function throwJiao() {
     const jiaoImages = document.getElementById("jiaoImages");
     jiaoImages.innerHTML = ""; // 清空圖片
 
+    // 擲筊結果的判斷
     if (jiao1 !== jiao2) {
         text = "聖筊：今天非常適合出門！";
         // 顯示正反圖
@@ -247,15 +249,32 @@ function fetchNongliSuggestion() {
         .then(response => response.json())
         .then(data => {
             if (data && data.result) {
-                const suggestion = data.result[0].nongli;
-                document.getElementById("nongliSuggestion").textContent = `今天的農民曆建議: ${suggestion}`;
+                nongliSuggestion = data.result[0].nongli;
+
+                // 根據擲筊結果與農民曆建議結合
+                updateSuggestionBasedOnJiaoResult();
             } else {
-                document.getElementById("nongliSuggestion").textContent = "無法取得農民曆建議，請稍後再試。";
+                nongliSuggestion = "無法取得農民曆建議，請稍後再試。";
+                document.getElementById("nongliSuggestion").textContent = nongliSuggestion;
             }
         })
         .catch(error => {
-            document.getElementById("nongliSuggestion").textContent = "無法連接到農民曆 API，請檢查網路。";
+            nongliSuggestion = "無法連接到農民曆 API，請檢查網路。";
+            document.getElementById("nongliSuggestion").textContent = nongliSuggestion;
         });
+}
+
+// 根據擲筊結果更新農民曆建議
+function updateSuggestionBasedOnJiaoResult() {
+    const jiaoResultText = document.getElementById("jiaoResult").textContent;
+
+    if (canGoOut && nongliSuggestion.includes("宜出行")) {
+        document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，且農民曆建議：今日宜出行！`;
+    } else if (!canGoOut && nongliSuggestion.includes("忌出行")) {
+        document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，且農民曆建議：今日不宜出行，建議在家休息。`;
+    } else {
+        document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，農民曆建議：${nongliSuggestion}`;
+    }
 }
 </script>
 
