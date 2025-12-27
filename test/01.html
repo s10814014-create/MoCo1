@@ -129,14 +129,20 @@ iframe {
 <input type="text" id="userInput" placeholder="輸入你想找的地點">
 <button onclick="searchUserPlace()">搜尋</button>
 
-<!-- 農民曆資訊 -->
+<!-- 農民曆建議 -->
 <h3>農民曆建議</h3>
-<iframe src="http://www.nongli.info/huangli/days/index.php?year=2026&month=1&date=1" frameborder="0"></iframe>
+<p id="nongliSuggestion">請擲筊或查看農民曆的建議...</p>
 
 <script>
 let userLat = null;
 let userLon = null;
 let canGoOut = true; // 擲筊結果
+
+// 假設的農民曆 API 資料（此處僅為範例，實際使用時需改為真實 API）
+const nongliData = {
+    "date": "2025-12-27",
+    "suggestion": "今天宜出行，適合外出遊玩。"
+};
 
 // 取得位置
 function getLocation() {
@@ -229,6 +235,15 @@ function throwJiao() {
     }
 
     document.getElementById("jiaoResult").textContent = text;
+
+    // 顯示農民曆建議
+    updateNongliSuggestion();
+}
+
+// 更新農民曆建議
+function updateNongliSuggestion() {
+    let suggestionText = "今日農民曆建議: " + nongliData.suggestion;
+    document.getElementById("nongliSuggestion").textContent = suggestionText;
 }
 </script>
 
