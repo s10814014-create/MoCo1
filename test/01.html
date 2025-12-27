@@ -139,61 +139,6 @@ let userLon = null;
 let canGoOut = true; // 擲筊結果
 let nongliSuggestion = ""; // 農民曆建議
 
-// 取得位置
-function getLocation() {
-    if (!navigator.geolocation) {
-        alert("裝置不支援地理位置");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            userLat = position.coords.latitude;
-            userLon = position.coords.longitude;
-
-            document.getElementById("location").textContent =
-                `緯度: ${userLat}, 經度: ${userLon}`;
-
-            showPlaces();
-        },
-        function(error) {
-            alert("無法取得位置: " + error.message);
-        }
-    );
-}
-
-// 顯示附近地點
-function showPlaces() {
-    const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
-    const ul = document.getElementById("places");
-    ul.innerHTML = "";
-
-    places.forEach(function(place) {
-        const li = document.createElement("li");
-        li.textContent = place;
-        li.onclick = function() {
-            const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
-            window.open(url, "_blank");
-        };
-        ul.appendChild(li);
-    });
-}
-
-// 自訂搜尋
-function searchUserPlace() {
-    const place = document.getElementById("userInput").value.trim();
-    if (!place) {
-        alert("請輸入要搜尋的地點");
-        return;
-    }
-    if (userLat === null) {
-        alert("請先取得位置");
-        return;
-    }
-    const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
-    window.open(url, "_blank");
-}
-
 // 擲筊判斷
 function throwJiao() {
     const jiao1 = Math.floor(Math.random() * 2); // 0 or 1
@@ -250,17 +195,17 @@ function fetchNongliSuggestion() {
         .then(data => {
             if (data && data.result) {
                 nongliSuggestion = data.result[0].nongli;
-
-                // 根據擲筊結果與農民曆建議結合
-                updateSuggestionBasedOnJiaoResult();
             } else {
                 nongliSuggestion = "無法取得農民曆建議，請稍後再試。";
-                document.getElementById("nongliSuggestion").textContent = nongliSuggestion;
             }
         })
         .catch(error => {
-            nongliSuggestion = "無法連接到農民曆 API，請檢查網路。";
-            document.getElementById("nongliSuggestion").textContent = nongliSuggestion;
+            // 捕獲錯誤並顯示友善訊息
+            nongliSuggestion = "無法連接到農民曆 API，請稍後再試。";
+        })
+        .finally(() => {
+            // 確保無論有無錯誤都更新顯示
+            updateSuggestionBasedOnJiaoResult();
         });
 }
 
@@ -276,7 +221,63 @@ function updateSuggestionBasedOnJiaoResult() {
         document.getElementById("nongliSuggestion").textContent = `擲筊結果：${jiaoResultText}，農民曆建議：${nongliSuggestion}`;
     }
 }
+
+// 取得位置
+function getLocation() {
+    if (!navigator.geolocation) {
+        alert("裝置不支援地理位置");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            userLat = position.coords.latitude;
+            userLon = position.coords.longitude;
+
+            document.getElementById("location").textContent =
+                `緯度: ${userLat}, 經度: ${userLon}`;
+
+            showPlaces();
+        },
+        function(error) {
+            alert("無法取得位置: " + error.message);
+        }
+    );
+}
+
+// 顯示附近地點
+function showPlaces() {
+    const places = ["星巴克", "麥當勞", "全聯", "動物園", "購物中心"];
+    const ul = document.getElementById("places");
+    ul.innerHTML = "";
+
+    places.forEach(function(place) {
+        const li = document.createElement("li");
+        li.textContent = place;
+        li.onclick = function() {
+            const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
+            window.open(url, "_blank");
+        };
+        ul.appendChild(li);
+    });
+}
+
+// 自訂搜尋
+function searchUserPlace() {
+    const place = document.getElementById("userInput").value.trim();
+    if (!place) {
+        alert("請輸入要搜尋的地點");
+        return;
+    }
+    if (userLat === null) {
+        alert("請先取得位置");
+        return;
+    }
+    const url = `https://www.google.com/maps/search/${encodeURIComponent(place)}/@${userLat},${userLon},15z`;
+    window.open(url, "_blank");
+}
 </script>
 
 </body>
 </html>
+
